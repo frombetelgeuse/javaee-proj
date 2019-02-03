@@ -3,13 +3,15 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.danya.javaee.instances;
+package com.danya.javaee.domain;
+
+import com.danya.javaee.dao.Identified;
 
 /**
  *
  * @author danya
  */
-public class City {
+public class City implements Identified {
     private Integer id;
     private String name;    
 
@@ -17,12 +19,12 @@ public class City {
     public String toString() {
         return "City{" + "id=" + id + ", name=" + name + '}';
     }
-
+    @Override
     public Integer getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    protected void setId(Integer id) {
         this.id = id;
     }
 
