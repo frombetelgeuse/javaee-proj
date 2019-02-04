@@ -5,9 +5,11 @@
  */
 package com.danya.javaee.dao.mariadb;
 
+import com.danya.javaee.Properties;
 import com.danya.javaee.dao.DAO;
 import com.danya.javaee.dao.DAOException;
 import com.danya.javaee.dao.DAOFactory;
+import com.danya.javaee.domain.Address;
 import com.danya.javaee.domain.City;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -21,10 +23,10 @@ import java.util.Map;
  */
 public class MariaDbDAOFactory implements DAOFactory<Connection> {
     
-    private static final String url = "jdbc:mysql://localhost:3306/<db>";
-    private static final String user = "<user>";
-    private static final String password = "<pass>";
-    private static final String driver = "org.mariadb.jdbc.Driver";
+    private static final String url = Properties.get("db.host");;
+    private static final String user = Properties.get("db.login");;
+    private static final String password = Properties.get("db.password");;
+    private static final String driver = Properties.get("db.driver");
     private Map<Class, DAOCreator> creators;
 
 //    public MariaDBFactory() {
@@ -62,7 +64,13 @@ public class MariaDbDAOFactory implements DAOFactory<Connection> {
         creators.put(City.class, new DAOCreator<Connection>() {
             @Override
             public DAO create(Connection conn) {
-                return new MariaDbCityDAO(conn);
+                return new MariaDbCityDAO(MariaDbDAOFactory.this, conn);
+            }
+        });
+        creators.put(Address.class, new DAOCreator<Connection>() {
+            @Override
+            public DAO create(Connection conn) {
+                return new MariaDbAddressDAO(MariaDbDAOFactory.this, conn);
             }
         });
     }

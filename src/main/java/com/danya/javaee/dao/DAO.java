@@ -19,4 +19,5 @@ public interface DAO<E extends Identified> {
     public void update(E object) throws DAOException;
     public void delete(E object) throws DAOException;
     public List<E> getAll() throws DAOException;
+//    protected List<E> getAllWith(String field, Object condition) throws DAOException;
 }

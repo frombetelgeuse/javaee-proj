@@ -7,6 +7,7 @@ package com.danya.javaee.dao.mariadb;
 
 import com.danya.javaee.dao.AbstractJdbcDAO;
 import com.danya.javaee.dao.DAOException;
+import com.danya.javaee.dao.DAOFactory;
 import com.danya.javaee.domain.City;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -27,18 +28,22 @@ public class MariaDbCityDAO extends AbstractJdbcDAO<City> {
         }
     }
 
-    public MariaDbCityDAO(Connection connection) {
-        super(connection);
+    public MariaDbCityDAO(DAOFactory<Connection> parentFactory, Connection connection) {
+        super(parentFactory, connection);
     }
     
     @Override
-    protected List<City> parseResultSet(ResultSet rs) throws SQLException {
+    protected List<City> parseResultSet(ResultSet rs) throws DAOException {
         List<City> list = new ArrayList();
-        while(rs.next()) {
-            PersistCity city = new PersistCity();
-            city.setId(rs.getInt("id"));
-            city.setName(rs.getString("name"));
-            list.add(city);
+        try {
+            while(rs.next()) {
+                PersistCity city = new PersistCity();
+                city.setId(rs.getInt("id"));
+                city.setName(rs.getString("name"));
+                list.add(city);
+            }
+        } catch (SQLException e) {
+            throw new DAOException("MariaDbCityDAO.parseResultSet", e);
         }
         return list;
     }
@@ -68,10 +73,10 @@ public class MariaDbCityDAO extends AbstractJdbcDAO<City> {
         ps.setString(1, entity.getName());
         ps.setInt(2, entity.getId());
     }
-    @Override
-    protected void prepareStatementForDelete(PreparedStatement ps, City entity) throws SQLException {
-        ps.setInt(1, entity.getId());
-    }
+//    @Override
+//    protected void prepareStatementForDelete(PreparedStatement ps, City entity) throws SQLException {
+//        ps.setInt(1, entity.getId());
+//    }
     @Override
     protected void prepareStatementForInsert(PreparedStatement ps, City entity) throws SQLException {
         ps.setString(1, entity.getName());

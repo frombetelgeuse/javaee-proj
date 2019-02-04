@@ -3,9 +3,15 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.danya.javaee.dao;
+package com.danya.javaee.dao.mariadb;
 
+import com.danya.javaee.dao.DAO;
+import com.danya.javaee.dao.DAOException;
+import com.danya.javaee.dao.DAOFactory;
+import com.danya.javaee.dao.DAOTest;
+import com.danya.javaee.dao.Identified;
 import com.danya.javaee.dao.mariadb.MariaDbDAOFactory;
+import com.danya.javaee.domain.Address;
 import com.danya.javaee.domain.City;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -29,6 +35,7 @@ public class MariaDbDAOTest extends DAOTest<Connection> {
     @Parameterized.Parameters
     public static Collection getParameters() {
         return Arrays.asList(new Object[][]{
+            {Address.class, new Address()},
             {City.class, new City()}
         });
     }
@@ -47,7 +54,7 @@ public class MariaDbDAOTest extends DAOTest<Connection> {
     }
     
     @Override
-    public DAO getDao() {
+    public DAO dao() {
         return dao;
     }
     

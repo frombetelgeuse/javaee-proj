@@ -22,7 +22,7 @@ public abstract class DAOTest<Context> {
     protected Class daoClass;
     protected Identified notPersistedDto;
     
-    public abstract DAO getDao();
+    public abstract DAO dao();
     public abstract Context context();
     
     public DAOTest(Class clazz, Identified notPersistedDto) {
@@ -32,7 +32,7 @@ public abstract class DAOTest<Context> {
 
     @Test
     public void testCreate() throws Exception {
-        Identified dto = getDao().create();
+        Identified dto = dao().create();
         
         assertNotNull(dto);
         assertNotNull(dto.getId());
@@ -41,14 +41,14 @@ public abstract class DAOTest<Context> {
     @Test
     public void testPersist() throws Exception {
         assertNull("Id before persist is not null.", notPersistedDto.getId());
-        notPersistedDto = getDao().persist(notPersistedDto);
+        notPersistedDto = dao().persist(notPersistedDto);
         assertNotNull("After persist id is null", notPersistedDto.getId());
     }
 
     @Test
     public void testGetEntityById() throws Exception {
-        Integer id = getDao().create().getId();
-        Identified dto = getDao().getEntityById(id);
+        Integer id = dao().create().getId();
+        Identified dto = dao().getEntityById(id);
         assertNotNull(dto);
     }
 
@@ -58,18 +58,18 @@ public abstract class DAOTest<Context> {
 
     @Test
     public void testDelete() throws Exception {
-        Identified dto = getDao().create();
+        Identified dto = dao().create();
         assertNotNull(dto);
         
-        List<Identified> list = getDao().getAll();
+        List<Identified> list = dao().getAll();
         Assert.assertNotNull(list);
 
         int oldSize = list.size();
         Assert.assertTrue(oldSize > 0);
 
-        getDao().delete(dto);
+        dao().delete(dto);
 
-        list = getDao().getAll();
+        list = dao().getAll();
         assertNotNull(list);
 
         int newSize = list.size();
@@ -78,7 +78,8 @@ public abstract class DAOTest<Context> {
 
     @Test
     public void testGetAll() throws Exception {
-        List<Identified> list = getDao().getAll();
+        dao().create();
+        List<Identified> list = dao().getAll();
         assertNotNull(list);
         assertTrue(list.size() > 0);
     }    
