@@ -6,71 +6,73 @@
 package com.danya.javaee.dao.mariadb;
 
 import com.danya.javaee.Properties;
-import com.danya.javaee.dao.DAO;
-import com.danya.javaee.dao.DAOException;
-import com.danya.javaee.dao.DAOFactory;
+import com.danya.javaee.dao.DaoException;
 import com.danya.javaee.domain.Address;
 import com.danya.javaee.domain.City;
+import com.danya.javaee.domain.Route;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
+import com.danya.javaee.dao.Dao;
+import com.danya.javaee.dao.DaoFactory;
 
 /**
  *
  * @author danya
  */
-public class MariaDbDAOFactory implements DAOFactory<Connection> {
+public class MariaDbDaoFactory implements DaoFactory<Connection> {
     
     private static final String url = Properties.get("db.host");;
     private static final String user = Properties.get("db.login");;
     private static final String password = Properties.get("db.password");;
     private static final String driver = Properties.get("db.driver");
-    private Map<Class, DAOCreator> creators;
-
-//    public MariaDBFactory() {
-//    }
+    private Map<Class, DaoCreator> creators;
     
     @Override
-    public Connection getContext() throws DAOException {
+    public Connection getContext() throws DaoException {
         Connection conn;
         try {
             conn = DriverManager.getConnection(url, user, password);
         } catch (SQLException e) {
-            throw new DAOException(e);
+            throw new DaoException(e);
         }
         return conn;
     }
 
     @Override
-    public DAO getDAO(Connection connection, Class dToClass) throws DAOException {
-        DAOCreator creator = creators.get(dToClass);
+    public Dao getDao(Connection connection, Class dToClass) throws DaoException {
+        DaoCreator creator = creators.get(dToClass);
         if (creator == null) {
-            throw new DAOException("DAO obj for " + dToClass + " not found.");
+            throw new DaoException("Dao obj for " + dToClass + " not found.");
         }
         return creator.create(connection);
-//        return new MariaDbCityDAO(connection);
     }
     
-    public MariaDbDAOFactory() {
+    public MariaDbDaoFactory() {
         try {
             Class.forName(driver);
         } catch (ClassNotFoundException e) {
-            // TODO Change to throwing exception
-            e.printStackTrace();
+            throw new RuntimeException("Couldn't find driver for db: " + driver);
         }
         creators = new HashMap();
-        creators.put(City.class, new DAOCreator<Connection>() {
+        creators.put(City.class, new DaoCreator<Connection>() {
             @Override
-            public DAO create(Connection conn) {
-                return new MariaDbCityDAO(MariaDbDAOFactory.this, conn);
+            public Dao create(Connection conn) {
+                return new MariaDbCityDao(MariaDbDaoFactory.this, conn);
             }
         });
-        creators.put(Address.class, new DAOCreator<Connection>() {
+        creators.put(Address.class, new DaoCreator<Connection>() {
             @Override
-            public DAO create(Connection conn) {
-                return new MariaDbAddressDAO(MariaDbDAOFactory.this, conn);
+            public Dao create(Connection conn) {
+                return new MariaDbAddressDao(MariaDbDaoFactory.this, conn);
+            }
+        });
+        creators.put(Route.class, new DaoCreator<Connection>() {
+            @Override
+            public Dao create(Connection conn) {
+                return new MariaDbRouteDao(MariaDbDaoFactory.this, conn);
             }
         });
     }

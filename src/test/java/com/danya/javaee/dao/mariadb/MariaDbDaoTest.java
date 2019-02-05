@@ -5,14 +5,12 @@
  */
 package com.danya.javaee.dao.mariadb;
 
-import com.danya.javaee.dao.DAO;
-import com.danya.javaee.dao.DAOException;
-import com.danya.javaee.dao.DAOFactory;
-import com.danya.javaee.dao.DAOTest;
+import com.danya.javaee.dao.DaoException;
+import com.danya.javaee.dao.DaoTest;
 import com.danya.javaee.dao.Identified;
-import com.danya.javaee.dao.mariadb.MariaDbDAOFactory;
 import com.danya.javaee.domain.Address;
 import com.danya.javaee.domain.City;
+import com.danya.javaee.domain.Route;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Arrays;
@@ -20,31 +18,34 @@ import java.util.Collection;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.runners.Parameterized;
+import com.danya.javaee.dao.Dao;
+import com.danya.javaee.dao.DaoFactory;
 
 /**
  *
  * @author danya
  */
-public class MariaDbDAOTest extends DAOTest<Connection> {
+public class MariaDbDaoTest extends DaoTest<Connection> {
     
     private Connection conn;
-    private DAO dao;
+    private Dao dao;
     
-    private static final DAOFactory<Connection> factory = new MariaDbDAOFactory();
+    private static final DaoFactory<Connection> factory = new MariaDbDaoFactory();
     
     @Parameterized.Parameters
     public static Collection getParameters() {
         return Arrays.asList(new Object[][]{
             {Address.class, new Address()},
-            {City.class, new City()}
+            {City.class, new City()},
+            {Route.class, new Route()}
         });
     }
     
     @Before
-    public void setUp() throws DAOException, SQLException {
+    public void setUp() throws DaoException, SQLException {
         conn = factory.getContext();
         conn.setAutoCommit(false);
-        dao = factory.getDAO(conn, daoClass);
+        dao = factory.getDao(conn, daoClass);
     }
     
     @After
@@ -54,7 +55,7 @@ public class MariaDbDAOTest extends DAOTest<Connection> {
     }
     
     @Override
-    public DAO dao() {
+    public Dao dao() {
         return dao;
     }
     
@@ -63,7 +64,7 @@ public class MariaDbDAOTest extends DAOTest<Connection> {
         return conn;
     }
     
-    public MariaDbDAOTest(Class clazz, Identified notPersistedDto) {
+    public MariaDbDaoTest(Class clazz, Identified notPersistedDto) {
         super(clazz, notPersistedDto);
     }  
 }

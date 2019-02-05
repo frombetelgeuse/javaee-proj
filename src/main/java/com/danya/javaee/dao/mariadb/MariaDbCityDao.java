@@ -5,9 +5,9 @@
  */
 package com.danya.javaee.dao.mariadb;
 
-import com.danya.javaee.dao.AbstractJdbcDAO;
-import com.danya.javaee.dao.DAOException;
-import com.danya.javaee.dao.DAOFactory;
+import com.danya.javaee.dao.AbstractJdbcDao;
+import com.danya.javaee.dao.CityDao;
+import com.danya.javaee.dao.DaoException;
 import com.danya.javaee.domain.City;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -15,12 +15,13 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import com.danya.javaee.dao.DaoFactory;
 
 /**
  *
  * @author danya
  */
-public class MariaDbCityDAO extends AbstractJdbcDAO<City> {
+public class MariaDbCityDao extends AbstractJdbcDao<City> implements CityDao {
     
     private class PersistCity extends City {
         public void setId(int id) {
@@ -28,12 +29,12 @@ public class MariaDbCityDAO extends AbstractJdbcDAO<City> {
         }
     }
 
-    public MariaDbCityDAO(DAOFactory<Connection> parentFactory, Connection connection) {
+    public MariaDbCityDao(DaoFactory<Connection> parentFactory, Connection connection) {
         super(parentFactory, connection);
     }
     
     @Override
-    protected List<City> parseResultSet(ResultSet rs) throws DAOException {
+    protected List<City> parseResultSet(ResultSet rs) throws DaoException {
         List<City> list = new ArrayList();
         try {
             while(rs.next()) {
@@ -43,7 +44,7 @@ public class MariaDbCityDAO extends AbstractJdbcDAO<City> {
                 list.add(city);
             }
         } catch (SQLException e) {
-            throw new DAOException("MariaDbCityDAO.parseResultSet", e);
+            throw new DaoException("MariaDbCityDao.parseResultSet", e);
         }
         return list;
     }
@@ -64,19 +65,20 @@ public class MariaDbCityDAO extends AbstractJdbcDAO<City> {
         return "INSERT INTO cities(name) VALUES (?)";
     }
     @Override
-    public City create() throws DAOException {
+    public City create() throws DaoException {
         City city = new City();
         return persist(city);
     }
     @Override
-    protected void prepareStatementForUpdate(PreparedStatement ps, City entity) throws SQLException {
-        ps.setString(1, entity.getName());
-        ps.setInt(2, entity.getId());
+    protected void prepareStatementForUpdate(PreparedStatement ps, City entity) throws DaoException {
+        try {
+            ps.setString(1, entity.getName());
+            ps.setInt(2, entity.getId());
+        } catch (SQLException e) {
+            throw new DaoException("mariadbcitydao.prepareStatementForUpdate", e);
+        }
     }
-//    @Override
-//    protected void prepareStatementForDelete(PreparedStatement ps, City entity) throws SQLException {
-//        ps.setInt(1, entity.getId());
-//    }
+    
     @Override
     protected void prepareStatementForInsert(PreparedStatement ps, City entity) throws SQLException {
         ps.setString(1, entity.getName());

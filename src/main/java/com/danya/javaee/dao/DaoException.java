@@ -9,20 +9,20 @@ package com.danya.javaee.dao;
  *
  * @author danya
  */
-public class DAOException extends Exception {
+public class DaoException extends Exception {
     
-    public DAOException() {
+    public DaoException() {
     }
 
-    public DAOException(String message) {
+    public DaoException(String message) {
         super(message);
     }
 
-    public DAOException(String message, Throwable cause) {
+    public DaoException(String message, Throwable cause) {
         super(message, cause);
     }
 
-    public DAOException(Throwable cause) {
+    public DaoException(Throwable cause) {
         super(cause);
     }
 

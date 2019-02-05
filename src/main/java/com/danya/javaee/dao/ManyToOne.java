@@ -14,7 +14,7 @@ import java.sql.Connection;
  */
 public class ManyToOne<Owner extends Identified, Dependence extends Identified> {
     
-    private DAOFactory<Connection> factory;
+    private DaoFactory<Connection> factory;
     private Field field;
     private String name;
     private int hash;
@@ -27,12 +27,12 @@ public class ManyToOne<Owner extends Identified, Dependence extends Identified> 
         field.set(owner, dependence);
     }
     
-    public Identified persistDependence(Owner owner, Connection connection) throws IllegalAccessException, DAOException {
-        return factory.getDAO(connection, field.getType()).persist(getDependence(owner));
+    public Identified persistDependence(Owner owner, Connection connection) throws IllegalAccessException, DaoException {
+        return factory.getDao(connection, field.getType()).persist(getDependence(owner));
     }
     
-    public void updateDependence(Owner owner, Connection connection) throws IllegalAccessException, DAOException {
-        factory.getDAO(connection, field.getType()).update(getDependence(owner));
+    public void updateDependence(Owner owner, Connection connection) throws IllegalAccessException, DaoException {
+        factory.getDao(connection, field.getType()).update(getDependence(owner));
     }
     
     @Override
@@ -45,7 +45,7 @@ public class ManyToOne<Owner extends Identified, Dependence extends Identified> 
         return hash;
     }
     
-    public ManyToOne(Class<Owner> ownerClass, DAOFactory<Connection> factory, String field) throws NoSuchFieldException {
+    public ManyToOne(Class<Owner> ownerClass, DaoFactory<Connection> factory, String field) throws NoSuchFieldException {
         this.factory = factory;
         this.field = ownerClass.getDeclaredField(field);
         this.field.setAccessible(true);

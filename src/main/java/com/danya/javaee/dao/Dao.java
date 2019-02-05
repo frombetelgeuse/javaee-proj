@@ -11,13 +11,13 @@ import java.util.List;
  *
  * @author danya
  */
-public interface DAO<E extends Identified> {
+public interface Dao<E extends Identified> {
     
-    public E create() throws DAOException;
-    public E persist(E object)  throws DAOException;
-    public E getEntityById(int key) throws DAOException;
-    public void update(E object) throws DAOException;
-    public void delete(E object) throws DAOException;
-    public List<E> getAll() throws DAOException;
+    public E create() throws DaoException;
+    public E persist(E object)  throws DaoException;
+    public E getEntityById(int key) throws DaoException;
+    public void update(E object) throws DaoException;
+    public void delete(E object) throws DaoException;
+    public List<E> getAll() throws DaoException;
 //    protected List<E> getAllWith(String field, Object condition) throws DAOException;
 }

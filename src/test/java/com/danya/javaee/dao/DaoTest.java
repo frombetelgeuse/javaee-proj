@@ -17,15 +17,15 @@ import org.junit.runners.Parameterized;
  * @author danya
  */
 @RunWith(Parameterized.class)
-public abstract class DAOTest<Context> {
+public abstract class DaoTest<Context> {
     
     protected Class daoClass;
     protected Identified notPersistedDto;
     
-    public abstract DAO dao();
+    public abstract Dao dao();
     public abstract Context context();
     
-    public DAOTest(Class clazz, Identified notPersistedDto) {
+    public DaoTest(Class clazz, Identified notPersistedDto) {
         this.daoClass = clazz;
         this.notPersistedDto = notPersistedDto;
     }
