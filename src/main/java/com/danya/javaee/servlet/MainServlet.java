@@ -8,6 +8,7 @@ package com.danya.javaee.servlet;
 import java.io.IOException;
 import java.io.PrintWriter;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -16,12 +17,18 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author danya
  */
+@WebServlet("/")
 public class MainServlet extends HttpServlet {
     
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws
             ServletException, IOException {
         PrintWriter out = resp.getWriter();
-        out.print("<h1>Hello, World!</h1>");
+        out.println("<h1><i>LOGISTICS IND.</i></h1>");
+        out.println("<br/>");
+        out.println("<a href=\"cities\">/cities</a><br/>");
+        out.println("<a href=\"addresses\">/addresses</a><br/>");
+        out.println("<a href=\"routes\">/routes</a><br/>");
+        
     }
 }

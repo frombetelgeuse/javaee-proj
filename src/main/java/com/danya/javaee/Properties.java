@@ -5,7 +5,11 @@
  */
 package com.danya.javaee;
 
-import java.util.Locale;
+import com.danya.javaee.dao.Dao;
+import com.danya.javaee.dao.DaoException;
+import com.danya.javaee.dao.DaoFactory;
+import com.danya.javaee.dao.Identified;
+import com.danya.javaee.dao.mariadb.MariaDbDaoFactory;
 import java.util.ResourceBundle;
 
 /**
@@ -13,9 +17,27 @@ import java.util.ResourceBundle;
  * @author danya
  */
 public class Properties {
-    private static ResourceBundle rb = ResourceBundle.getBundle("config");
+    
+    private static ResourceBundle rb;
+    private static DaoFactory daoFactory;
+    static {
+        rb = ResourceBundle.getBundle("config");
+        daoFactory = new MariaDbDaoFactory();
+    }
     
     public static String get(String prop) {
         return rb.getString(prop);
+    }
+    
+    public static DaoFactory getDaoFactory() {
+        return daoFactory;
+    }
+    
+    public static Dao  getDao(Class<? extends Identified> clazz) {
+        try {
+            return getDaoFactory().getDao(daoFactory.getContext(), clazz);
+        }  catch (DaoException e) {
+            throw new RuntimeException("Cannot connect to db", e);
+        }
     }
 }
