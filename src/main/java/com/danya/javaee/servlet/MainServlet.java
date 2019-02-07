@@ -29,6 +29,11 @@ public class MainServlet extends HttpServlet {
         out.println("<a href=\"cities\">/cities</a><br/>");
         out.println("<a href=\"addresses\">/addresses</a><br/>");
         out.println("<a href=\"routes\">/routes</a><br/>");
+        out.println("<br/>");
+        Integer visNum = (Integer) req.getSession().getAttribute("visNum");
+        visNum = (visNum == null) ? 1 : visNum+1;
+        req.getSession().setAttribute("visNum", visNum);
+        out.println("You have visited this page " + visNum + " times.");
         
     }
 }
