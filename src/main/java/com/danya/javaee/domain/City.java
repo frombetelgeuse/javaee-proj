@@ -6,6 +6,7 @@
 package com.danya.javaee.domain;
 
 import com.danya.javaee.dao.Identified;
+import java.util.Objects;
 
 /**
  *
@@ -19,12 +20,20 @@ public class City implements Identified {
     public String toString() {
         return "City{" + "id=" + id + ", name=" + name + '}';
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null)  return false;
+        if (! (o instanceof City)) return false;
+        return getId() == ((City)o).getId();
+    }
+    
     @Override
     public Integer getId() {
         return id;
     }
 
-    protected void setId(Integer id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

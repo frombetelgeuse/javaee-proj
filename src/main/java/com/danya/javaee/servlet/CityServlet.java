@@ -68,7 +68,6 @@ public class CityServlet extends HttpServlet {
         out.println("<tr><th>Id</th><th>Name</th></tr>");
         cities.stream().map(CityServlet::formatCityToTable).forEach(out::println);
         out.println("</table>");
-        
     }
     
     public static String formatCityToTable(City city) {

@@ -7,6 +7,7 @@ package com.danya.javaee.domain;
 
 import com.danya.javaee.dao.Identified;
 import java.util.List;
+import java.util.Objects;
 
 /**
  *
@@ -18,6 +19,13 @@ public class Route implements Identified {
     private String name;
     private List<City> cities;
 
+    @Override
+    public boolean equals(Object o) {
+        if (o == null)  return false;
+        if (! (o instanceof Route)) return false;
+        return (Objects.equals(((City)o).getId(), getId()));
+    }
+
     public String getName() {
         return name;
     }
@@ -26,7 +34,7 @@ public class Route implements Identified {
         this.name = name;
     }
 
-    protected void setId(Integer id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

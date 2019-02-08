@@ -5,10 +5,12 @@
  */
 package com.danya.javaee.dao;
 
+import java.io.Serializable;
+
 /**
  *
  * @author danya
  */
-public interface Identified {
+public interface Identified extends Serializable {
     public Integer getId();
 }
