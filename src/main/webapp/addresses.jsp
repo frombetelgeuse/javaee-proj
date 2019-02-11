@@ -34,10 +34,11 @@
 <jsp:useBean id="addressBean" class="com.danya.javaee.domain.Address" scope="request"/>
 <jsp:setProperty name="addressBean" property="*"/>
 <%
+    //Populate bean with dependency
     String cityIdUnparsed = request.getParameter("city.id");
     Integer cityId = (cityIdUnparsed==null || cityIdUnparsed.isEmpty()) ? null : Integer.valueOf((cityIdUnparsed));
     String cityName = request.getParameter("city.name");
-    if (cityId != null || cityName != null) {
+    if (cityId != null || !"".equals(cityName)) {
         City city = new City();
         city.setId(cityId);
         city.setName(cityName);
@@ -173,8 +174,8 @@
                             <td class="bord<%=selected%>"><%=address.getCity().getName()%></td>
                             <input type="hidden" name="city.name" value="<%=address.getCity().getName()%>"/>
                         <%} else {%>
-                            <td></td>
-                            <td></td>
+                            <td class="bord<%=selected%>"></td>
+                            <td class="bord<%=selected%>"></td>
                         <%}%>
                         <td><input type="submit" name="beanAction" value="edit"/></td>
                         <td><input type="submit" name="beanAction" value="delete"/></td>

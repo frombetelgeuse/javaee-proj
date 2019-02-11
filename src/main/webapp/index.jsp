@@ -9,7 +9,7 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>JSP Page</title>
+        <title>Logistics Ind.</title>
     </head>
     <body>
         <h1><i>LOGISTICS IND.</i></h1><br/>
