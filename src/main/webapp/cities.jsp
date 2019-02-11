@@ -119,7 +119,7 @@
         <table class="table-bord">
             <form action="cities.jsp" method="post">
                 <tr>
-                    <th class="bord"><input type="submit" name="sortBy" value="Id"/></th>
+                    <th class="bord"><input type="submit" name="sortBy" value="Id"></th>
                     <th class="bord"><input type="submit" name="sortBy" value="Name"/></th>
                     <th></th>
                 </tr>
@@ -145,8 +145,6 @@
             <%}%>
             <tr>
                 <form action="cities.jsp" method="post">
-                    <input type="hidden" name="id" value=""/>
-                    <input type="hidden" name="name" value=""/>
                     <th><input type="submit" name="beanAction" value="+"/></th>
                 </form>
             </tr>
@@ -158,7 +156,7 @@
                 <table>
                     <tr>
                         <td style="text-align:right;">Id:</td>
-                        <td><input type="text" name="id" readonly value="${cityBean.id}"/></td>
+                        <td><input size="3" type="text" name="id" readonly value="${cityBean.id}"/></td>
                     </tr>
                     <tr>
                         <td style="text-align:right;">Name:</td>

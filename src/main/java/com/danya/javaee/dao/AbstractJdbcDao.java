@@ -37,12 +37,12 @@ public abstract class AbstractJdbcDao<E extends Identified> implements Dao<E> {
     protected void prepareForDelete(E entity) throws DaoException {}
     protected void prepareForPersist(E entity, Integer id) throws DaoException {}
     
-    protected List<E> getAllWith(String field, Object condition) throws DaoException {
+    public List<E> getAllWith(String field, Object condition) throws DaoException {
         List<E> list;
         String sql = getSelectQuery();
-        sql += "WHERE " + field + "=?";
+        sql += " WHERE " + field + " = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setObject(1, condition);
+            ps.setString(1, condition.toString());
             ResultSet rs = ps.executeQuery();
             list = parseResultSet(rs);
         } catch (Exception e) {
@@ -89,9 +89,9 @@ public abstract class AbstractJdbcDao<E extends Identified> implements Dao<E> {
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             prepareStatementForUpdate(ps, entity);
             int count = ps.executeUpdate();
-            if (count != 1) {
-                throw new DaoException("On update modified more than one record: " + count);
-            }
+//            if (count != 1) {
+//                throw new DaoException("On update modified more than one record: " + count);
+//            }
         } catch (Exception e) {
             throw new DaoException("AbstractJdbcDao.update", e);
         }

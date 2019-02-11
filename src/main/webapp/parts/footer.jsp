@@ -13,5 +13,6 @@
         .selected { background-color: #397784;}
         .toupdate { background-color: yellow;}
         .todelete { background-color: red;}
+        .to-right { text-align: right;}
     </style>
 </html>
