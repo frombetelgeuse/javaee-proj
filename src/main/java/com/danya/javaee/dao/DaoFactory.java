@@ -15,6 +15,7 @@ public interface DaoFactory<Context> {
         public Dao create(Context context);
     }
     public Context getContext() throws DaoException;
+    public void closeContext(Context context) throws DaoException;
     public Dao getDao(Context context, Class dToClass) throws DaoException;
  
     

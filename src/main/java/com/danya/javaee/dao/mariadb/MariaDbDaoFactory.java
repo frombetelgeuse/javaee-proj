@@ -36,9 +36,18 @@ public class MariaDbDaoFactory implements DaoFactory<Connection> {
         try {
             conn = DriverManager.getConnection(url, user, password);
         } catch (SQLException e) {
-            throw new DaoException(e);
+            throw new DaoException("Exception at opening connection", e);
         }
         return conn;
+    }
+    
+    @Override
+    public void closeContext(Connection connection) throws DaoException {
+        try {
+            connection.close();
+        } catch(SQLException e) {
+            throw new DaoException("Exception at closing connection", e);
+        }
     }
 
     @Override
