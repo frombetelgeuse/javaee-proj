@@ -9,6 +9,7 @@ import com.danya.javaee.Properties;
 import com.danya.javaee.dao.CityDao;
 import com.danya.javaee.dao.DaoException;
 import com.danya.javaee.domain.City;
+import com.danya.javaee.util.ParameterUtils;
 import com.danya.javaee.util.SessionUtils;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -56,7 +57,7 @@ public class CityServlet extends HttpServlet {
             throw new ServletException("Cannot connect to db", e);
         }
         
-        City cityBean = buildCity(request);
+        City cityBean = getProperties(request);
         
 //    HANDLE REQUESTS
         try {
@@ -145,19 +146,17 @@ public class CityServlet extends HttpServlet {
             throw new ServletException("Problems with closing db", e);
         }
 
+        request.setAttribute("cityBean", cityBean);
         request.setAttribute("list", list);
         request.setAttribute("citiesIdSelected", citiesIdSelected);
 
         request.getRequestDispatcher("cities.jsp").forward(request, resp);
     }
     
-    public City buildCity(HttpServletRequest request) {
+    public City getProperties(HttpServletRequest request) {
         City city = new City();
-        String idS = request.getParameter("id");
-        String name = request.getParameter("name");
-        Integer id = ("".equals(idS) || idS == null) ? null : Integer.valueOf(idS);
-        city.setId(id);
-        city.setName(name);
+        city.setId(ParameterUtils.getParameterInt(request, "id"));
+        city.setName(ParameterUtils.getParameter(request, "name"));
         return city;
     }
 }

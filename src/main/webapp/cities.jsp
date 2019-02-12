@@ -5,17 +5,6 @@
 --%>
 <%@ taglib prefix = "c" uri = "http://java.sun.com/jsp/jstl/core" %>
 
-<%@page import="com.danya.javaee.util.SessionUtils"%>
-<%@page import="java.util.HashSet"%>
-<%@page import="java.util.Set"%>
-<%@page import="java.util.Collections"%>
-<%@page import="java.sql.Connection"%>
-<%@page import="java.util.Comparator"%>
-<%@page import="com.danya.javaee.dao.DaoException"%>
-<%@page import="java.util.List"%>
-<%@page import="com.danya.javaee.domain.City"%>
-<%@page import="com.danya.javaee.Properties"%>
-<%@page import="com.danya.javaee.dao.CityDao"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 
 <!DOCTYPE html>
@@ -27,7 +16,7 @@
     <body>
         <h1>Cities</h1>
         <c:if test = "${citiesIdSelected != null && !citiesIdSelected.isEmpty()}">
-            <form action="cities" method="post">
+            <form action="cities" method="get">
                 <fieldset>
                     <legend>Selected</legend>
                     <p>Selected ${citiesIdSelected.size()} elements</p>
@@ -38,7 +27,7 @@
         </c:if>
         <br/>
         <table class="table-bord">
-            <form action="cities" method="post">
+            <form action="cities" method="get">
                 <tr>
                     <th class="bord"><input type="submit" name="sortBy" value="Id"></th>
                     <th class="bord"><input type="submit" name="sortBy" value="Name"/></th>
@@ -55,7 +44,7 @@
                     </c:otherwise>
                 </c:choose>
                 <tr>
-                    <form action="cities" method="post">
+                    <form action="cities" method="get">
                         <td class="bord ${selected}">${city.id}</td>
                         <input type="hidden" name="id" value="${city.id}"/>
                         <td class="bord ${selected}">${city.name}</td>
@@ -74,7 +63,7 @@
                 </tr>
             </c:forEach>
             <tr>
-                <form action="cities" method="post">
+                <form action="cities" method="get">
                     <th><input type="submit" name="beanAction" value="+"/></th>
                 </form>
             </tr>

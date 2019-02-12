@@ -6,16 +6,20 @@
 package com.danya.javaee.servlet;
 
 import com.danya.javaee.Properties;
-import com.danya.javaee.dao.RouteDao;
+import com.danya.javaee.dao.CityDao;
 import com.danya.javaee.dao.DaoException;
+import com.danya.javaee.dao.RouteDao;
 import com.danya.javaee.domain.City;
 import com.danya.javaee.domain.Route;
-import com.danya.javaee.util.UrlUtils;
+import com.danya.javaee.util.ParameterUtils;
+import com.danya.javaee.util.SessionUtils;
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.sql.Connection;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
-import javax.servlet.ServletConfig;
+import java.util.Set;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -29,61 +33,156 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet("/routes")
 public class RouteServlet extends HttpServlet {
     
-    private RouteDao routeDao;
-    
-    @Override
-    public void init(ServletConfig sc) {
-        routeDao = (RouteDao) Properties.getDao(Route.class);
-    }
-    
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws
             ServletException, IOException {
-        PrintWriter out = resp.getWriter();
-        List<Route> routes;
+        processRequest(req, resp);
+    }
+    
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws
+            ServletException, IOException {
+        processRequest(req, resp);
+    }
+    
+    protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws
+            ServletException, IOException {
+        
+//    PREPARE DB
+        Connection context;
+        RouteDao routeDao;
+        CityDao cityDao;
         try {
-            routes = routeDao.getAll();
+            context = (Connection) Properties.getDaoFactory().getContext();
+            routeDao = (RouteDao) Properties.getDaoFactory().getDao(context, Route.class);
+            cityDao = (CityDao) Properties.getDaoFactory().getDao(context, City.class);
         } catch (DaoException e) {
-            throw new ServletException("Can't read from db", e);
+            throw new ServletException("Cannot connect to db", e);
         }
-        Map<String, String> params = UrlUtils.parseUrlParams(req.getQueryString());
-        switch (params.getOrDefault("sortBy", "")) {
-            case "id" : routes.sort((a1, a2) -> a1.getId().compareTo(a2.getId()));
-                    break;
-            case "name" : routes.sort((a1, a2) -> a1.getName().compareTo(a2.getName()));
-                    break;
-        }
-        printRoutesTableFormat(out, routes);
         
-        out.println(
-                "<style type=\"text/css\">\n" +
-                "   table, td, th { border: 1px solid black; border-collapse: collapse;} "
-                + " td { padding: 5px; text-align: left;} "
-                + " th { padding: 5px; text-align: center; }"
-                + "</style>");
+        Route routeBean = getProperties(request);
+        
+//    HANDLE REQUESTS
+        try {
+            String beanAction = request.getParameter("beanAction");
+            if (null != beanAction) switch (beanAction) {
+                case "save":
+                    if (routeBean.getId() == null) {
+                        List<City> cities = routeBean.getCities();
+                        if (!cities.isEmpty()) {
+                            for (int i = 0; i < cities.size(); i++) {
+                                if (cities.get(i).getId() == null) {
+                                    List<City> citiesTemp = cityDao.getAllWith("name", cities.get(i).getName());
+                                    if (!citiesTemp.isEmpty()) {
+                                        cities.set(i, citiesTemp.get(0));
+                                    }
+                                }
+                            }
+                        }
+                        Integer id = routeDao.persist(routeBean).getId();
+                        routeBean.setId(id);
+                    } else {
+                        routeDao.update(routeBean);
+                    }   break;
+                case "delete":
+                    routeDao.delete(routeBean);
+                    SessionUtils.getSet(request.getSession(), "routes.selected").remove(routeBean.getId());
+                    routeBean.setId(null);
+                    break;
+                case "addToSelect":
+                    SessionUtils.getSet(request.getSession(), "routes.selected").add(routeBean.getId());
+                    break;
+                case "removeFromSelect":
+                    SessionUtils.getSet(request.getSession(), "routes.selected").remove(routeBean.getId());
+                    break;
+                default:
+                    break;
+            }
+
+            String selectedAction = request.getParameter("selectedAction");
+            if ("deleteAll".equals(selectedAction)) {
+                Set<Integer> routesIdSelected = SessionUtils.getSet(request.getSession(), "routes.selected");
+                for (Integer id : routesIdSelected) {
+                    Route toDelete = routeDao.getEntityById(id);
+                    if (toDelete != null) {
+                        routeDao.delete(toDelete);
+                    }
+                }
+                routesIdSelected.clear();
+            } else if ("clear".equals(selectedAction)) {
+                SessionUtils.getSet(request.getSession(), "routes.selected").clear();
+            }
+
+            String sortByAction = request.getParameter("sortBy");
+            if (sortByAction != null) {
+                sortByAction = sortByAction.toLowerCase();
+                if (sortByAction.equals(request.getSession().getAttribute("routes.sortBy"))) {
+                    boolean rev = SessionUtils.getBoolean(request.getSession(), "routes.reverse");
+                    request.getSession().setAttribute("routes.reverse", !rev);
+                }
+                request.getSession().setAttribute("routes.sortBy", sortByAction);
+            }
+        } catch (DaoException e) {
+            throw new ServletException("Problems with db", e);
+        }
+        
+        
+//    PREPARE DATA
+        List<Route> list;   
+        try {
+            list = routeDao.getAll();
+        } catch (DaoException e) {
+            throw new ServletException("Can't read from db");
+        }
+        String sortBy = (String) request.getSession().getAttribute("routes.sortBy");
+        sortBy = (sortBy == null) ? "" : sortBy;
+        switch (sortBy) {
+            case "id" : list.sort((a1, a2) -> a1.getId().compareTo(a2.getId()));
+                break;
+            case "name" : list.sort(
+                    Comparator.comparing(
+                            Route::getName, 
+                            Comparator.nullsLast(Comparator.naturalOrder())));
+                break;
+        }
+        if (SessionUtils.getBoolean(request.getSession(), "routes.reverse")) {
+            Collections.reverse(list);
+        }
+        Set<Integer> routesIdSelected = SessionUtils.getSet(request.getSession(), "routes.selected");
+        
+        try {
+            Properties.getDaoFactory().closeContext(context);
+        } catch(DaoException e) {
+            throw new ServletException("Problems with closing db", e);
+        }
+
+        request.setAttribute("routeBean", routeBean);
+        request.setAttribute("list", list);
+        request.setAttribute("routesIdSelected", routesIdSelected);
+
+        request.getRequestDispatcher("routes.jsp").forward(request, response);
     }
     
-    public static void printRoutesTableFormat(PrintWriter out, List<Route> cities) {
-        out.println("<h1>Routes</h1>");
-        out.println("<table>");
-        out.println("<tr><th rowspan=\"2\">Id</th><th rowspan=\"2\">Name</th><th colspan=\"2\">City</th></tr><tr><th>Id</th><th>Name</th></tr>");
-        cities.stream().map(RouteServlet::formatRouteToTable).forEach(out::println);
-        out.println("</table>");
-        
+    public Route getProperties(HttpServletRequest request) {
+        Route route = new Route();
+        route.setId(ParameterUtils.getParameterInt(request, "id"));
+        route.setName(ParameterUtils.getParameter(request, "name"));
+
+        List<City> cities = new ArrayList();
+        for (int i = 0; true; i++) {
+            Integer cityId = ParameterUtils.getParameterInt(request, "city."+i+".id");
+            String cityName = ParameterUtils.getParameter(request, "city."+i+".name");
+            if (cityId != null || cityName != null) {
+                City city = new City();
+                city.setId(cityId);
+                city.setName(cityName);
+                cities.add(city);
+            } else {
+                break;
+            }
+        }
+        route.setCities(cities);
+        return route;
     }
     
-    public static String formatRouteToTable(Route route) {
-        int citiesNum = route.getCities().size();
-        citiesNum = (citiesNum == 0) ? 2 : citiesNum+1;
-        StringBuilder sb = new StringBuilder();
-        sb.append("<tr>").append("<td rowspan=\"").append(citiesNum).append("\">").append(route.getId()).append("</td>")
-            .append("<td rowspan=\"").append(citiesNum).append("\">").append(route.getName()).append("</td>");
-//            .append("<td>").append(route.getCity().getName()).append("</td>")
-        for (City city : route.getCities()) {
-            sb.append("<tr>").append("<td>").append(city.getId()).append("</td>")
-                    .append("<td>").append(city.getName()).append("</td>").append("</tr>");
-        }
-        sb.append("<tr>");
-        return sb.toString();
-    }
 }
