@@ -10,11 +10,18 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>Logistics Ind.</title>
+        <link href="//fonts.googleapis.com/css?family=Raleway:400,300,600" rel="stylesheet" type="text/css">
+        
+        <link rel="stylesheet" type="text/css" href="css/normalize.css">
+        <link rel="stylesheet" type="text/css" href="css/skeleton.css">
     </head>
     <body>
-        <h1><i>LOGISTICS IND.</i></h1><br/>
-        <a href="cities.jsp">/cities</a><br/>
-        <a href="addresses.jsp">/addresses</a><br/>
-        <a href="routes.jsp">/routes</a><br/>
+        <div class="container">
+            <br/>
+            <h1>LOGISTICS IND.</h1><br/>
+            <a href="cities">/cities</a><br/>
+            <a href="addresses">/addresses</a><br/>
+            <a href="routes">/routes</a><br/>
+        </div>
     </body>
 </html>

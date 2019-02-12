@@ -12,77 +12,84 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>Cities ~ Logistics Ind.</title>
+        <link href="//fonts.googleapis.com/css?family=Raleway:400,300,600" rel="stylesheet" type="text/css">
+        
+        <link rel="stylesheet" type="text/css" href="css/normalize.css">
+        <link rel="stylesheet" type="text/css" href="css/skeleton.css">
     </head>
     <body>
-        <h1>Cities</h1>
-        <c:if test = "${citiesIdSelected != null && !citiesIdSelected.isEmpty()}">
-            <form action="cities" method="get">
-                <fieldset>
-                    <legend>Selected</legend>
-                    <p>Selected ${citiesIdSelected.size()} elements</p>
-                    <input type="submit" name="selectedAction" value="deleteAll"/>
-                    <input type="submit" name="selectedAction" value="clear"/>
-                </fieldset>
-            </form>
-        </c:if>
-        <br/>
-        <table class="table-bord">
-            <form action="cities" method="get">
-                <tr>
-                    <th class="bord"><input type="submit" name="sortBy" value="Id"></th>
-                    <th class="bord"><input type="submit" name="sortBy" value="Name"/></th>
-                    <th></th>
-                </tr>
-            </form>
-            <c:forEach var="city" items="${list}">
-                <c:choose>
-                    <c:when test="${citiesIdSelected.contains(city.getId())}">
-                        <c:set var="selected" value="selected" scope="request"/>
-                    </c:when>
-                    <c:otherwise>
-                        <c:set var="selected" value="" scope="request"/>
-                    </c:otherwise>
-                </c:choose>
-                <tr>
-                    <form action="cities" method="get">
-                        <td class="bord ${selected}">${city.id}</td>
-                        <input type="hidden" name="id" value="${city.id}"/>
-                        <td class="bord ${selected}">${city.name}</td>
-                        <input type="hidden" name="name" value="${city.name}"/>
-                        <td><input type="submit" name="beanAction" value="edit"/></td>
-                        <td><input type="submit" name="beanAction" value="delete"/></td>
-                        <c:choose>
-                            <c:when test="${!citiesIdSelected.contains(city.getId())}">
-                                <td><input type="submit" name="beanAction" value="addToSelect"/></td>
-                            </c:when>
-                            <c:otherwise>
-                                <td><input type="submit" name="beanAction" value="removeFromSelect"/></td>
-                            </c:otherwise>
-                        </c:choose>
-                    </form>
-                </tr>
-            </c:forEach>
-            <tr>
+        <div class="container">
+            <br/>
+            <h1>Cities</h1>
+            
+            
+            <c:if test = "${citiesIdSelected != null && !citiesIdSelected.isEmpty()}">
                 <form action="cities" method="get">
-                    <th><input type="submit" name="beanAction" value="+"/></th>
+                    <h4>Selected</h4>
+                    <p>Selected ${citiesIdSelected.size()} element(s)</p>
+                    <input class="button-primary" type="submit" name="selectedAction" value="deleteAll"/>
+                    <input class="button-primary" type="submit" name="selectedAction" value="clear"/>
                 </form>
-            </tr>
-        </table>
-        <br/>
-        <form action="cities" method="post">
-            <fieldset>
-                <legend>Editing</legend>
-                <table>
+            </c:if>
+            
+            
+            <h4>Table</h4>
+            <table class="u-full-width">
+                <thead>
                     <tr>
-                        <td style="text-align:right;">Id:</td>
-                        <td><input size="3" type="text" name="id" readonly value="${cityBean.id}"/></td>
+                        <th><a href="?sortBy=Id">Id</a></th>
+                        <th><a href="?sortBy=Name">Name</a></th>
+                        <th></th>
                     </tr>
-                    <tr>
-                        <td style="text-align:right;">Name:</td>
-                        <td><input type="text" name="name" value="${cityBean.name}"/></td>
-                    </tr>
-                </table>
-                <input type="submit" name="beanAction" value="save" />
-            </fieldset>
-        </form>
-<%@ include file="parts/footer.jsp" %>
+                </thead>
+                <tbody>
+                    <c:forEach var="city" items="${list}">
+                        <tr>
+                            <form action="cities" method="post">
+                                <td>${city.id}</td>
+                                <input type="hidden" name="id" value="${city.id}"/>
+                                <td>${city.name}</td>
+                                <input type="hidden" name="name" value="${city.name}"/>
+                                <td>
+                                    <input class="button-primary" type="submit" name="beanAction" value="edit"/>
+                                    <input class="button-primary" type="submit" name="beanAction" value="delete"/>
+                                    <c:choose>
+                                        <c:when test="${!citiesIdSelected.contains(city.getId())}">
+                                            <input type="submit" name="beanAction" value="addToSelect"/>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <input type="submit" name="beanAction" value="removeFromSelect"/>
+                                        </c:otherwise>
+                                    </c:choose>
+                                </td>
+                            </form>
+                        </tr>
+                    </c:forEach>
+                </tbody>
+            </table>
+            <form action="cities" method="get">
+                <input class="button-primary" type="submit" name="beanAction" value="New"/>
+            </form>
+            
+            
+            <form action="cities" method="post">
+                <h4>Editing</h4>
+                <div class="row">
+                    <div class="two columns">
+                        <label for="id">Id:</label>
+                        <input class="u-full-width" placeholder="Id" type="text" name="id" readonly value="${cityBean.id}"/>
+                    </div>
+                    <div class="ten columns">
+                        <label for="name">Name:</label>
+                        <input class="u-full-width" placeholder="Name" type="text" name="name" value="${cityBean.name}"/>
+                    </div>
+                </div>
+                <input class="button-primary" type="submit" name="beanAction" value="save" />
+            </form>
+            <br/>
+            <center>
+                <h5>Made by Danya</h5>
+            </center>
+        </div>
+    </body>
+</html>

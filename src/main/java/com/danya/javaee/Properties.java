@@ -32,12 +32,4 @@ public class Properties {
     public static DaoFactory getDaoFactory() {
         return daoFactory;
     }
-    
-    public static Dao  getDao(Class<? extends Identified> clazz) {
-        try {
-            return getDaoFactory().getDao(daoFactory.getContext(), clazz);
-        }  catch (DaoException e) {
-            throw new RuntimeException("Cannot connect to db", e);
-        }
-    }
 }
