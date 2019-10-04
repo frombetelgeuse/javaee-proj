@@ -1,5 +1,8 @@
 target/
 
+.idea/
+javaee.iml
+
 # Compiled class file
 *.class
 
